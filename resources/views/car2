@@ -1,0 +1,209 @@
+@extends('layouts.home')
+@section('content')
+@php
+	$url=Request::segment(1);
+	if(	$url == "en"){
+		$language='en';
+	}elseif($url == "ar"){
+			$language='ar';
+	}else{
+		$language='en';
+	}
+	@endphp
+<!--banner start here-->
+@include('layouts.headercommon')
+
+<!--banner ends here-->
+<section class="main-inner-sec ">
+	<div class="accordion-block">
+		<div class="container">
+			<div class="admission-blocknew">
+					<?php
+					  if(!empty($data)){
+							 foreach($data as $v){
+					        if($language != "en"){
+					            $heading1 =$v['title_ar'];
+					            $description1 =$v['description_ar'];
+					        }else{
+					          $heading1 =$v['title_en'];
+					            $description1 =$v['description_en'];
+					        }
+									?>
+									 <h4 class="text-main">{{$heading1}}</h4>
+								 	 {!!$description1!!}<br>
+									<?php
+					       }
+					      ?>
+      <?php
+}
+?>
+@if(Session::has('message'))
+<div class="pj">
+<p style="margin-top: 15px;" class="alert {{ Session::get('alert-class') }} successMessage">{{ Session::get('message') }}</p>
+</div>
+@endif
+
+
+<div class="form-group">
+	<div class="form-control alert alert-success alert-block suvessmessage" style="display:none">
+	<button type="button" class="close" data-dismiss="alert">×</button>	
+        <strong class="appendsucess"> </strong>
+</div>
+</div>
+
+<!-- <form class="form-career formsdata" id="configform"> -->
+	
+	<form id="testimonialForm" class="form-career" method="post" action="{{Config::get('variable.URL_LINK')}}store" enctype="multipart/form-data">
+
+	<input type="hidden" name="_token" value="{{csrf_token()}}">
+	<div class="form-group">
+		<input type="text" id="job" class="form-control" name="job" aria-describedby="name"
+		placeholder="@if($language != 'en') الوظائف    @else Job @endif" required>
+		<div class="alert alert-danger print-error-msg" style="display:none"></div>
+	</div>
+	<div class="form-group">
+		<input type="text" id="name" class="form-control" name="name" aria-describedby="name" placeholder="@if($language != 'en') الاسم   @else Name @endif" required>
+		<div class="alert alert-danger print-error-msg1" style="display:none"></div>
+	</div>
+	<div class="form-group">
+		<input type="email" class="form-control" id="email" name="email" placeholder="@if($language != 'en') البريد الإلكتروني     @else   Email @endif" required>
+		<div class="alert alert-danger print-error-msg2" style="display:none"></div>
+	</div>
+	<div class="form-group">
+		<input type="text" id="nationality" class="form-control" name="nationality" placeholder="@if($language != 'en')  الجنسية   @else Nationality @endif" required>
+		<div class="alert alert-danger print-error-msg3" style="display:none"></div>
+	</div>
+	<div class="form-group">
+		<input type="text" id="country" class="form-control" name="residency" placeholder="@if($language != 'en') بلد الإقامة   @else Country of Residence @endif" required>
+		<div class="alert alert-danger print-error-msg4" style="display:none"></div>
+	</div>
+	<div class="form-group">
+		<input  type="text" id="inputMobile" class="form-control" name="number" placeholder="@if($language != 'en') رقم الهاتف    @else Phone Number @endif" required>
+		<div class="alert alert-danger print-error-msg5" style="display:none"></div>
+	</div>
+
+	<div class="form-group">
+		<input  type="file" id="resumes" class="form-control" name="resumes" placeholder="@if($language != 'en') Upload Resume  @else Upload Resume @endif" accept=".doc, .docx,.ppt, .pptx,.txt,.pdf" required>
+		<div class="alert alert-danger print-error-msg6" style="display:none"></div>
+	</div>
+
+
+	<div class="form-group">
+    <a href="#" class="btn btn-primary submitsave"> @if($language == 'ar') إرسال  @else Submit @endif</a>	</div>
+</form>
+</div>
+</div>
+</div>
+</section>
+@include('layouts.needadoctorsingle')
+  </div>
+</section>
+@endsection
+
+@section('script')
+<script type="text/javascript">
+// $(document).ready(function(){
+//   $(".submitsave").click(function(){
+// 			var form = $('.form')[0];
+// 			console.log(form); return false;
+
+//     $(".alert-danger").css('display','none');
+//     $.ajax({
+//     type: "POST",
+//     url: "{{Config::get('variable.URL_LINK')}}store",
+//     data: jQuery(".formsdata").serialize(),
+//     cache: false,
+//     success:  function(data){
+//          	if($.isEmptyObject(data.error)){  
+//     	            $(".suvessmessage").css('display','block');                 
+//                     $(".appendsucess").append(data.success);  
+//                      $('#configform')[0].reset();
+//                     }else{  
+//                     	$(".alert-danger").empty().css('display','none');                                      	
+//                         printErrorMsg(data.error);                        
+//                     }
+//     }
+//   });
+
+//   });
+
+
+//save_contactus
+$(document).ready(function(){
+$(".submitsave").click(function(e){		
+$(".alert-danger").css('display','none');
+		$('.pageloader').show();
+		// Get form
+		var form = $('#testimonialForm')[0];
+		// Create an FormData object 
+		var data = new FormData(form);
+		var url = $("#testimonialForm").attr('action');	
+		
+		$(this).prop("disabled", true);
+
+		$.ajax({
+			url: url,
+			type: 'POST',
+			enctype: 'multipart/form-data',
+			data: data,
+			processData: false,
+			contentType: false,
+			cache: false,
+			success: function(data) {
+				if($.isEmptyObject(data.error)){  
+					 $(".suvessmessage").css('display','block');                 
+                    $(".appendsucess").append(data.success);  
+                     $('#testimonialForm')[0].reset();
+                    }else{  
+                    	$(".alert-danger").empty().css('display','none');                                      	
+                        printErrorMsg(data.error);                        
+                    }    
+			}
+		});
+		
+	});
+
+
+
+   function printErrorMsg (msg) {
+         
+            if(msg['job']){
+            $(".print-error-msg").css('display','block');
+            $(".print-error-msg").empty().append(msg['job']);
+            }
+            if(msg['name']){
+            $(".print-error-msg1").css('display','block');  
+            $(".print-error-msg1").empty().append(msg['name']);  
+            }
+             if(msg['email']){
+             $(".print-error-msg2").css('display','block');   
+             $(".print-error-msg2").empty().append(msg['email']);              
+            }
+              if(msg['nationality']){  
+              $(".print-error-msg3").css('display','block');
+              $(".print-error-msg3").empty().append(msg['nationality']); 
+            }
+             if(msg['residency']){  
+              $(".print-error-msg4").css('display','block');
+              $(".print-error-msg4").empty().append(msg['residency']);  
+            }
+            if(msg['number']){ 
+              $(".print-error-msg5").css('display','block');
+              $(".print-error-msg5").empty().append(msg['number']); 
+            }
+
+             if(msg['resume']){ 
+              $(".print-error-msg6").css('display','block');
+              $(".print-error-msg6").empty().append(msg['resume']); 
+            }
+
+        }
+
+       });
+
+setTimeout(function() {
+    $('.pj').fadeOut('fast');
+}, 1000);
+
+</script>
+@endsection
