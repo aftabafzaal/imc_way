@@ -44,16 +44,18 @@ class InitiativesController extends Controller {
         //die("dasdasd");
         $helper = new Helpers();
 
-        $all = Initiatives::get();
+        //$all = Initiatives::get();
 
         $per_page = (isset($request->recordvalue) ? $request->recordvalue : Config::get('variable.page_per_record'));
         $searchname = "";
         if (isset($request->name)) {
             $searchname = $request->name;
-            $model = Initiatives::where("title_en", "like", "%" . $request->name . "%")->paginate($per_page);
+            $model = Initiatives::where("title_en", "like", "%" . $request->name . "%");
         } else {
-            $model = Initiatives::paginate($per_page);
+            $model = new Initiatives;
         }
+
+        $model = $model->orderBy("id", "desc")->paginate($per_page);
         $data["searchname"] = $searchname;
         $data["model"] = $model;
         $data["folder"] = $this->folder;
@@ -118,7 +120,7 @@ class InitiativesController extends Controller {
             $input = $request->all();
             $categories = isset($input['categories']) ? $input['categories'] : [];
             $attachments = isset($input['attachments']) ? $input['attachments'] : [];
-            
+
             unset($input['_token']);
             unset($input['categories']);
             unset($input['attachments']);
@@ -264,7 +266,7 @@ class InitiativesController extends Controller {
 
             $categories = isset($input['categories']) ? $input['categories'] : [];
             $attachments = isset($input['attachments']) ? $input['attachments'] : [];
-            
+
 
 
             unset($input['_token']);
@@ -332,6 +334,8 @@ class InitiativesController extends Controller {
         try {
             $model = Initiatives::find($id);
             $model->delete();
+            InitiativeMedia::where('initiative_id', $id)->delete();
+            InitiativeCategory::where('initiative_id', $id)->delete();
             return json_encode(array('status' => 1, 'message' => "Project Deleted"));
         } catch (Exception $e) {
             return json_encode(array('status' => 0, 'message' => $e->getMessage()));
@@ -341,6 +345,8 @@ class InitiativesController extends Controller {
     public function deleteMultiple(Request $request) {
         try {
             $result = Initiatives::whereIn('id', $request->ids)->delete();
+            InitiativeMedia::whereIn('initiative_id', $request->ids)->delete();
+            InitiativeCategory::whereIn('initiative_id', $request->ids)->delete();
             return json_encode(array('status' => 1, 'message' => "Project Deleted"));
         } catch (Exception $e) {
             return json_encode(array('status' => 0, 'message' => $e->getMessage()));
