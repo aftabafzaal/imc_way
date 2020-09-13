@@ -34,7 +34,7 @@ $helper = new Helpers();
         <div class="kt-portlet">
             <div class="kt-portlet__body kt-portlet__body--fit">
                 <div class="kt-grid">
-                    <div class="kt-grid__item kt-grid__item--fluid kt-wizard-v4__wrapper">
+                    <div class="kt-grid__item kt-grid__item--fluid">
 
                         <div class="kt-wizard-v4__content" data-ktwizard-type="step-content" data-ktwizard-state="current">
                             <div class="kt-heading kt-heading--md">Edit {{$title}} :</div>
@@ -53,7 +53,7 @@ $helper = new Helpers();
 
 
                         <!--end: Form Actions -->
-                        </form>
+                        
                         <!--end: Form Wizard Form-->
                     </div>
                 </div>
