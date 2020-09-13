@@ -67,27 +67,25 @@ $required = "";
                                 @endif
                             </div>
                         </div>
-                        <div class="form-group row">
-                            <label class="col-xl-2 col-lg-2 col-form-label"> Slug (en)</label>
-                            <div class="col-lg-8 col-xl-8">
-                                {!! Form::text('slug_en', null , array('placeholder' =>'','class' => 'form-control ',"") ) !!}
 
-                                @if ($errors->has('slug_en'))
+                        <div class="form-group row">
+                            <label class="col-xl-2 col-lg-2 col-form-label"> Start Date</label>
+                            <div class="col-lg-9 col-xl-9">
+                                {!! Form::text('start_at', null , array('placeholder' =>'Start Date','class' => 'form-control datepicker',$required,"") ) !!}
+                                @if ($errors->has('when_ar'))
                                 <span class="invalid-feedback" role="alert">
-                                    <strong>{{ $errors->first('slug_en') }}</strong>
+                                    <strong>{{ $errors->first('when_ar') }}</strong>
                                 </span>
                                 @endif
                             </div>
                         </div>
-
-
                         <div class="form-group row">
-                            <label class="col-xl-2 col-lg-2 col-form-label"> Slug (ar)</label>
-                            <div class="col-lg-8 col-xl-8">
-                                {!! Form::text('slug_ar', null , array('placeholder' =>'','class' => 'form-control ',"") ) !!}
-                                @if ($errors->has('slug_ar'))
+                            <label class="col-xl-2 col-lg-2 col-form-label"> End Date</label>
+                            <div class="col-lg-9 col-xl-9">
+                                {!! Form::text('end_at', null , array('placeholder' =>'End Date','class' => 'form-control datepicker',$required,"") ) !!}
+                                @if ($errors->has('end_at'))
                                 <span class="invalid-feedback" role="alert">
-                                    <strong>{{ $errors->first('slug_ar') }}</strong>
+                                    <strong>{{ $errors->first('end_at') }}</strong>
                                 </span>
                                 @endif
                             </div>
@@ -115,17 +113,13 @@ $required = "";
                                 @endif
                             </div>
                         </div>
-
-
-
-
                         <div class="form-group row">
                             <label class="col-xl-2 col-lg-2 col-form-label"> {{ __('Department') }}</label>
 
 
                             <div class="col-lg-9 col-xl-9">
 
-                                {!! Form::select('department_id',  $departments,$selected,array('class' => 'form-control select2',"",$required)) !!}
+                                {!! Form::select('department_id',  $departments,$selected,array('class' => 'form-control select2',"",$required,'placeholder' => 'Please Select Department')) !!}
 
                                 @if ($errors->has('department_id'))
                                 <span class="invalid-feedback" role="alert">
@@ -142,7 +136,7 @@ $required = "";
 
                             <div class="col-lg-9 col-xl-9">
 
-                                {!! Form::select('business_owner_id',  $owners,null,array('class' => 'form-control select2',"",$required)) !!}
+                                {!! Form::select('business_owner_id',  $owners,null,array('class' => 'form-control select2',"",$required,'placeholder' => 'Please Select Business Owner')) !!}
 
                                 @if ($errors->has('business_owner_id'))
                                 <span class="invalid-feedback" role="alert">
@@ -158,7 +152,7 @@ $required = "";
 
                             <div class="col-lg-9 col-xl-9">
 
-                                {!! Form::select('project_id',  $projects,null,array('class' => 'form-control select2 project_id"',"id"=>"project_id",$required)) !!}
+                                {!! Form::select('project_id',  $projects,null,array('class' => 'form-control select2 project_id"',"id"=>"project_id",$required,'placeholder' => 'Please Select Project')) !!}
 
                                 @if ($errors->has('project_id'))
                                 <span class="invalid-feedback" role="alert">
@@ -248,27 +242,32 @@ $required = "";
     <div class="tab-pane fade" id="extra" role="tabpanel" aria-labelledby="extra-tab-3">
 
         <div class="form-group row">
-            <label class="col-xl-2 col-lg-2 col-form-label"> Start Date</label>
-            <div class="col-lg-9 col-xl-9">
-                {!! Form::text('start_at', null , array('placeholder' =>'Start Date','class' => 'form-control datepicker',$required,"") ) !!}
-                @if ($errors->has('when_ar'))
+            <label class="col-xl-2 col-lg-2 col-form-label"> Slug (en)</label>
+            <div class="col-lg-8 col-xl-8">
+                {!! Form::text('slug_en', null , array('placeholder' =>'','class' => 'form-control ',"") ) !!}
+
+                @if ($errors->has('slug_en'))
                 <span class="invalid-feedback" role="alert">
-                    <strong>{{ $errors->first('when_ar') }}</strong>
+                    <strong>{{ $errors->first('slug_en') }}</strong>
                 </span>
                 @endif
             </div>
         </div>
+
+
         <div class="form-group row">
-            <label class="col-xl-2 col-lg-2 col-form-label"> End Date</label>
-            <div class="col-lg-9 col-xl-9">
-                {!! Form::text('end_at', null , array('placeholder' =>'End Date','class' => 'form-control datepicker',$required,"") ) !!}
-                @if ($errors->has('end_at'))
+            <label class="col-xl-2 col-lg-2 col-form-label"> Slug (ar)</label>
+            <div class="col-lg-8 col-xl-8">
+                {!! Form::text('slug_ar', null , array('placeholder' =>'','class' => 'form-control ',"") ) !!}
+                @if ($errors->has('slug_ar'))
                 <span class="invalid-feedback" role="alert">
-                    <strong>{{ $errors->first('end_at') }}</strong>
+                    <strong>{{ $errors->first('slug_ar') }}</strong>
                 </span>
                 @endif
             </div>
         </div>
+
+
         <div class="form-group row">
             <label class="col-xl-3 col-lg-3 col-form-label"> Descriptions(En)</label>
             <div class="col-lg-8 col-xl-8">

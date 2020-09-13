@@ -116,7 +116,9 @@ class InitiativesController extends Controller {
             ]);
 
             $input = $request->all();
-            $attachments = $input['attachments'];
+            $categories = isset($input['categories']) ? $input['categories'] : [];
+            $attachments = isset($input['attachments']) ? $input['attachments'] : [];
+            
             unset($input['_token']);
             unset($input['categories']);
             unset($input['attachments']);
@@ -137,9 +139,6 @@ class InitiativesController extends Controller {
             }
             $model = Initiatives::create($input);
 
-
-
-            $categories = $request->categories;
             foreach ($categories as $category_id) {
                 $categoryModel = new InitiativeCategory();
                 $categoryModel->category_id = $category_id;
@@ -186,8 +185,6 @@ class InitiativesController extends Controller {
         $categories = InitCategory::latest()->pluck("title_en", "id");
         $owners = InitBusinessOwner::latest()->pluck("title_en", "id");
         $departments = Department::latest()->pluck("title_en", "id");
-
-
 
         $mediaModel = InitiativeMedia::join('media', 'media.id', '=', 'initiative_media.media_id')
                 ->select('media.id', 'media.filepath', 'media.type')
@@ -267,7 +264,7 @@ class InitiativesController extends Controller {
 
             $categories = isset($input['categories']) ? $input['categories'] : [];
             $attachments = isset($input['attachments']) ? $input['attachments'] : [];
-            $deleted = isset($input['deleted']) ? $input['deleted'] : [];
+            
 
 
             unset($input['_token']);
