@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Auth;
 use App\InitiativeCategory;
 use App\InitProject;
 use App\InitBusinessOwner;
+use App\InitiativeMedia;
 
 class InitiativesController extends Controller {
 
@@ -114,9 +115,11 @@ class InitiativesController extends Controller {
             ]);
 
             $input = $request->all();
-
+            $attachments = $input['attachments'];
             unset($input['_token']);
             unset($input['categories']);
+            unset($input['attachments']);
+            //InitiativeMedia
 
             $model = new Initiatives();
 
@@ -142,6 +145,18 @@ class InitiativesController extends Controller {
                 $categoryModel->initiative_id = $model->id;
                 $categoryModel->created_at = date("Y-m-d H:i:s");
                 $categoryModel->save();
+            }
+
+            foreach ($attachments as $attachment) {
+                $media_id = $helper->getMediaID($attachment["file"]);
+
+                if (!isset($attachment["deleted"])) {
+                    $initiativeModel = new InitiativeMedia();
+                    $initiativeModel->media_id = $media_id;
+                    $initiativeModel->initiative_id =  $model->id;
+                    $initiativeModel->created_at = date("Y-m-d H:i:s");
+                    $initiativeModel->save();
+                }
             }
 
             return redirect('admin/init/' . $this->folder)->with("message", "Initiatives created")->with('alert-class', 'alert-success');
@@ -181,6 +196,14 @@ class InitiativesController extends Controller {
         $owners = InitBusinessOwner::latest()->pluck("title_en", "id");
         $departments = Department::latest()->pluck("title_en", "id");
 
+
+
+        $mediaModel = InitiativeMedia::join('media', 'media.id', '=', 'initiative_media.media_id')
+                ->select('media.id', 'media.filepath', 'media.type')
+                ->where('initiative_id', $id)
+                ->get();
+
+        $data["mediaModel"] = $mediaModel;
         $data["projects"] = $projects;
         $data["departments"] = $departments;
         $data["owners"] = $owners;
@@ -223,12 +246,22 @@ class InitiativesController extends Controller {
             ]);
 
             $input = $request->all();
-            $categories = $input['categories'];
+
+            $categories = isset($input['categories']) ? $input['categories'] : [];
+            $attachments = isset($input['attachments']) ? $input['attachments'] : [];
+            $deleted = isset($input['deleted']) ? $input['deleted'] : [];
+
+
             unset($input['_token']);
             unset($input['_method']);
             unset($input['submit']);
             unset($input['categories']);
+            unset($input['attachments']);
             unset($input['image1']);
+            unset($input['image']);
+            unset($input['deleted']);
+
+
 
             if (empty($request->slug_en)) {
                 $input["slug_en"] = str_slug($request->title_en, '-');
@@ -242,15 +275,34 @@ class InitiativesController extends Controller {
                 $input["status"] = 2;
             }
 
-            $model = Initiatives::where("id", $id)->update($input);
+            Initiatives::where("id", $id)->update($input);
 
             InitiativeCategory::where('initiative_id', $id)->delete();
             foreach ($categories as $category_id) {
+
+
                 $categoryModel = new InitiativeCategory();
                 $categoryModel->category_id = $category_id;
                 $categoryModel->initiative_id = $id;
                 $categoryModel->created_at = date("Y-m-d H:i:s");
                 $categoryModel->save();
+            }
+
+            InitiativeMedia::where('initiative_id', $id)->delete();
+            $i = 0;
+
+            foreach ($attachments as $attachment) {
+
+                $media_id = $helper->getMediaID($attachment["file"]);
+
+                if (!isset($attachment["deleted"])) {
+                    $initiativeModel = new InitiativeMedia();
+                    $initiativeModel->media_id = $media_id;
+                    $initiativeModel->initiative_id = $id;
+                    $initiativeModel->created_at = date("Y-m-d H:i:s");
+                    $initiativeModel->save();
+                }
+                $i++;
             }
 
             return redirect('admin/init/' . $this->action)->with("message", "Project Updated")->with('alert-class', 'alert-success');
@@ -273,12 +325,6 @@ class InitiativesController extends Controller {
         return view("admin.init." . $this->folder . ".getcategories", $data);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function destroy($id) {
         try {
             $model = Initiatives::find($id);

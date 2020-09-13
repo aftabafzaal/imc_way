@@ -35,30 +35,21 @@ $helper = new Helpers();
             <div class="kt-portlet__body kt-portlet__body--fit">
                 <div class="kt-grid">
                     <div class="kt-grid__item kt-grid__item--fluid kt-wizard-v4__wrapper">
+                        <!--begin: Form Wizard Form-->
+                        {{ Form::model($model, array('route' => array($action.'.update', $model->id), 'method' => 'PUT',"class"=>"kt-form")) }}
 
-                        <div class="kt-wizard-v4__content" data-ktwizard-type="step-content" data-ktwizard-state="current">
-                            <div class="kt-heading kt-heading--md">Edit {{$title}} :</div>
-                            <div class="kt-section kt-section--first">
-                                <!--begin: Form Wizard Form-->
-                                {{ Form::model($model, array('route' => array($action.'.update', $model->id), 'method' => 'PUT')) }}
-
-                                @include('admin.init.'.$folder.'.form')
-                                <div class="kt-form__actions">
-                                    <input type="submit" value="Submit" name="submit" class="btn btn-brand btn-md btn-tall btn-wide kt-font-bold kt-font-transform-u">
-                                </div>
-
-                                {!! Form::close() !!}
-                            </div>
+                        @include('admin.init.'.$folder.'.form')
+                        <div class="kt-form__actions">
+                            <input type="submit" value="Submit" name="submit" class="btn btn-brand btn-md btn-tall btn-wide kt-font-bold kt-font-transform-u">
                         </div>
 
-
-                        <!--end: Form Actions -->
-                        </form>
-                        <!--end: Form Wizard Form-->
+                        {!! Form::close() !!}
                     </div>
                 </div>
             </div>
         </div>
     </div>
+</div>
+</div>
 </div>
 @stop
