@@ -15,6 +15,7 @@ use App\InitiativeCategory;
 use App\InitProject;
 use App\InitBusinessOwner;
 use App\InitiativeMedia;
+use App\Media;
 
 class InitiativesController extends Controller {
 
@@ -147,17 +148,7 @@ class InitiativesController extends Controller {
                 $categoryModel->save();
             }
 
-            foreach ($attachments as $attachment) {
-                $media_id = $helper->getMediaID($attachment["file"]);
-
-                if (!isset($attachment["deleted"])) {
-                    $initiativeModel = new InitiativeMedia();
-                    $initiativeModel->media_id = $media_id;
-                    $initiativeModel->initiative_id =  $model->id;
-                    $initiativeModel->created_at = date("Y-m-d H:i:s");
-                    $initiativeModel->save();
-                }
-            }
+            $this->manageMedia($attachments, $model->id);
 
             return redirect('admin/init/' . $this->folder)->with("message", "Initiatives created")->with('alert-class', 'alert-success');
         } catch (Exception $e) {
@@ -225,6 +216,33 @@ class InitiativesController extends Controller {
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
+    public function manageMedia($attachments, $id) {
+
+        $i = 0;
+        $helper = new Helpers();
+        foreach ($attachments as $attachment) {
+
+            if (!isset($attachment["deleted"])) {
+                if ($attachment["type"] == "youtube") {
+                    $model = new Media();
+                    $model->filepath = $attachment["file"];
+                    $model->type = $attachment["type"];
+                    $model->created_at = date("Y-m-d H:i:s");
+                    $model->save();
+                    $media_id = $model->id;
+                } else {
+                    $media_id = $helper->getMediaID($attachment["file"]);
+                }
+                $initiativeModel = new InitiativeMedia();
+                $initiativeModel->media_id = $media_id;
+                $initiativeModel->initiative_id = $id;
+                $initiativeModel->created_at = date("Y-m-d H:i:s");
+                $initiativeModel->save();
+            }
+            $i++;
+        }
+    }
+
     public function update(Request $request, $id) {
 
         $helper = new Helpers();
@@ -290,20 +308,8 @@ class InitiativesController extends Controller {
 
             InitiativeMedia::where('initiative_id', $id)->delete();
             $i = 0;
+            $this->manageMedia($attachments, $id);
 
-            foreach ($attachments as $attachment) {
-
-                $media_id = $helper->getMediaID($attachment["file"]);
-
-                if (!isset($attachment["deleted"])) {
-                    $initiativeModel = new InitiativeMedia();
-                    $initiativeModel->media_id = $media_id;
-                    $initiativeModel->initiative_id = $id;
-                    $initiativeModel->created_at = date("Y-m-d H:i:s");
-                    $initiativeModel->save();
-                }
-                $i++;
-            }
 
             return redirect('admin/init/' . $this->action)->with("message", "Project Updated")->with('alert-class', 'alert-success');
         } catch (Exception $e) {

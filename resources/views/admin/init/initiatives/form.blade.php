@@ -13,11 +13,11 @@ $required = "";
         </a>
     </li>
     <li class="nav-item">
-        <a class="nav-link" id="extra-tab-3" data-toggle="tab" href="#extra">
+        <a class="nav-link" id="readmore-tab-3" data-toggle="tab" href="#readmore">
             <span class="nav-icon">
                 <i class="flaticon2-chat-1"></i>
             </span>
-            <span class="nav-text">Extra</span>
+            <span class="nav-text">Read More</span>
         </a>
     </li>
     <li class="nav-item">
@@ -26,6 +26,14 @@ $required = "";
                 <i class="flaticon2-chat-1"></i>
             </span>
             <span class="nav-text">Media</span>
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" id="extra-tab-3" data-toggle="tab" href="#extra">
+            <span class="nav-icon">
+                <i class="flaticon2-chat-1"></i>
+            </span>
+            <span class="nav-text">Extra</span>
         </a>
     </li>
 </ul>
@@ -212,6 +220,31 @@ $required = "";
             </div>
         </div>
     </div>
+
+    <div class="tab-pane" id="readmore" role="tabpanel" aria-labelledby="readmore-tab-3">
+        <div class="form-group row">
+            <label class="col-xl-2 col-lg-2 col-form-label"> Read more Title</label>
+            <div class="col-lg-9 col-xl-9">
+                {!! Form::text('url_title', null , array('placeholder' =>'Title of the url e.g. Download PDF','class' => 'form-control',"") ) !!}
+                @if ($errors->has('url_title'))
+                <span class="invalid-feedback" role="alert">
+                    <strong>{{ $errors->first('url_title') }}</strong>
+                </span>
+                @endif
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-xl-2 col-lg-2 col-form-label">URL</label>
+            <div class="col-lg-9 col-xl-9">
+                {!! Form::text('url', null , array('placeholder' =>'URL','class' => 'form-control',"") ) !!}
+                @if ($errors->has('url'))
+                <span class="invalid-feedback" role="alert">
+                    <strong>{{ $errors->first('url') }}</strong>
+                </span>
+                @endif
+            </div>
+        </div>
+    </div>
     <div class="tab-pane fade" id="extra" role="tabpanel" aria-labelledby="extra-tab-3">
 
         <div class="form-group row">
@@ -270,7 +303,7 @@ $required = "";
                         <th>
                             Media
                         </th>
-                        <th class="last"></th>
+                        <th class="last">Delete</th>
                     </tr>
                 </thead>
                 <tbody id="media_gallery_content_list">
@@ -279,19 +312,26 @@ $required = "";
                     @foreach($mediaModel as $file)
                     <tr>
                         <td>
-                            <?php
-                            $ext = pathinfo($file->filepath, PATHINFO_EXTENSION);
+                            <?php if ($file->type == "youtube") { ?>
+                                <iframe width="200" height="200" src="https://www.youtube.com/embed/<?php echo $file->filepath ?>" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
-                            if ($ext == "jpg" || $ext == "jpeg" || $ext == "png") {
+
+                                <?php
+                            } else {
+                                $ext = pathinfo($file->filepath, PATHINFO_EXTENSION);
+                                if ($ext == "jpg" || $ext == "jpeg" || $ext == "png") {
+                                    ?>
+                                    <img width="100" height="100" src="<?php echo env('BASE_URL') . "/images/media/" . $file->filepath ?>">
+                                <?php } else { ?>
+                                    <video  width="100" height="100" src="<?php echo env('BASE_URL') . "/images/media/" . $file->filepath ?>" autoplay>
+                                        <?php
+                                    }
+                                }
                                 ?>
-                                <img width="100" height="100" src="<?php echo env('BASE_URL') . "/images/media/" . $file->filepath ?>">
-                            <?php } else { ?>
-                                <video  width="100" height="100" src="<?php echo env('BASE_URL') . "/images/media/" . $file->filepath ?>" autoplay>
-                                <?php } ?>
 
                                 <input type="hidden" value="<?php echo $file->filepath ?>" id="attachments"  name="attachments[{{ $loop->index }}][file]" type="text">
                                 </td>
-                                <td> <input type="checkbox" value="1" id="deleted"  name="attachments[{{ $loop->index }}][deleted]"></td>
+                                <td> <input type="checkbox" value="1" id="deleted"  name="attachments[{{ $loop->index }}][deleted]"> <input type="hidden" value="<?php echo $file->type ?>" id="type"  name="attachments[{{ $loop->index }}][type]"></td>
                     </tr>
                     @endforeach
                     @endif
@@ -301,8 +341,30 @@ $required = "";
 
         </div>
         <div class="form-group row">
-            <label class="col-xl-2 col-lg-2 col-form-label"> Image</label>
+            <label class="col-xl-11 col-lg-11 col-form-label"> Add Images and Videos</label>
+            <div class="col-lg-1 col-xl-1">
+
+
+
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-xl-4 col-lg-2 col-form-label"> Source </label>
             <div class="col-lg-8 col-xl-8">
+                <select id="source" class="form-control">
+                    <option value="local">Local</option>
+                    <option value="youtube">Youtube</option>
+                </select>    
+
+            </div>
+            <div class="col-lg-1 col-xl-1">
+
+            </div>
+        </div>
+
+        <div class="form-group row" id="div-local">
+            <label class="col-xl-2 col-lg-2 col-form-label"> Image</label>
+            <div class="col-lg-8 col-xl-8" >
                 <input placeholder="Upload Image" id="image1" name="image" type="text" class="form-control {{ $errors->has('image1') ? ' is-invalid' : '' }}" value="" readonly>
 
                 @if ($errors->has('image1'))
@@ -315,8 +377,14 @@ $required = "";
                 <button type="button" class="btn btn-bold btn-label-brand btn-sm mediaModel" data-toggle="modal" data-target="#media-model" data-control="image1">Browse</button>
             </div>
         </div>
+        <div class="form-group row" id="div-youtube" style="display: none;">
+            <label class="col-xl-2 col-lg-2 col-form-label"> Youtube video id</label>
+            <div class="col-lg-8 col-xl-8" >
+                <input placeholder="Enter youtube video id e.g. a3ICNMQW7Ok" id="youtube_url" type="text" class="form-control" value="a3ICNMQW7Ok">
+            </div>
+        </div>
         <div class="form-group row">
-            <button type="button" id="add" class="btn btn-bold btn-label-brand btn-sm">Add</button>
+            <button type="button" id="add" class="btn btn-bold btn-label-brand btn-lg">Add</button>
 
         </div>
     </div>
@@ -325,11 +393,13 @@ $required = "";
 <script src="{{ env('BASE_URL')}}/assets/unisharp/laravel-ckeditor/ckeditor.js"></script>
 <script>
 
-var count = <?php if (!empty($mediaModel)) {
+var count = <?php
+                                if (!empty($mediaModel)) {
                                     echo count($mediaModel);
                                 } else {
                                     echo 0;
-                                } ?>;
+                                }
+                                ?>;
 var url = "<?php echo env("BASE_URL") ?>/images/media/";
 $(document).ready(function () {
     $('.select2').select2();
@@ -337,21 +407,44 @@ $(document).ready(function () {
         format: 'yyyy-mm-dd'
     });
 
+    $("#source").change(function () {
+        var source = $("#source").val();
+
+        if (source == "youtube") {
+            $("#div-local").hide();
+        } else {
+            $("#div-youtube").hide();
+        }
+        $("#div-" + source).show();
+
+    });
     $("#add").click(function () {
 
-        var val = $("#image1").val();
-        if (val != "") {
-            var ext = (/[.]/.exec(val)) ? /[^.]+$/.exec(val) : undefined;
-            var source = "";
-            if (ext == "jpg" || ext == "jpeg" || ext == "png") {
-                source = '<img width="100" height="100" src="' + url + val + '">';
-            } else {
-                source = '<video  width="100" height="100" src="' + url + val + '" autoplay>';
+        var val = "";
+        var source = $("#source").val();
+
+        var emb = "";
+
+        if (source == "youtube") {
+            var youtube_url = $("#youtube_url").val();
+            youtube_url = youtube_url.trim();
+            val = youtube_url;
+            emb = '<iframe width="200" height="200" src="https://www.youtube.com/embed/' + youtube_url
+                    + '" frameborder="0"></iframe>';
+        } else {
+            val = $("#image1").val();
+            if (val != "") {
+                var ext = (/[.]/.exec(val)) ? /[^.]+$/.exec(val) : undefined;
+                if (ext == "jpg" || ext == "jpeg" || ext == "png") {
+                    emb = '<img width="200" height="200" src="' + url + val + '">';
+                } else {
+                    emb = '<video  width="200" height="200" src="' + url + val + '" autoplay>';
+                }
             }
+        }
 
-
-            var html = '<tr><td>' + source + '<input type="hidden" value="' + val + '" id="file"  name="attachments[' + count + '][file]" type="text"></td><td><input type="checkbox" value="1" id="deleted"  name="attachments[' + count + '][deleted]"></td></tr>';
-
+        if (emb != "") {
+            var html = '<tr><td>' + emb + '<input type="hidden" value="' + val + '" id="file"  name="attachments[' + count + '][file]" type="text"></td><td><input type="checkbox" value="1" id="deleted"  name="attachments[' + count + '][deleted]"><input type="hidden" value="' + source + '" id="type"  name="attachments[' + count + '][type]"></td></tr>';
 
             $("#image1").val("");
             $("#media_gallery_content_list").append(html);
@@ -434,9 +527,6 @@ function getCategories() {
 
     });
 }
-
-
-/* select template */
 
 function selectTemplate(obj, type) {
     var thisvalue = obj.value; //$(obj).find("option:selected").text();
