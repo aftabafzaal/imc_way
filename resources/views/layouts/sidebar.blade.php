@@ -390,7 +390,7 @@ $logo = $helper->getlogo();
                                     </a>
                                 </li>
                                 <li class="kt-menu__item {{ (Request::url() == url('admin/init/businessowners') ? 'kt-menu__item--active' : '') }}" aria-haspopup="true">
-                                    <a href="{{ url('admin/init/categories') }}" class="kt-menu__link ">
+                                    <a href="{{ url('admin/init/businessowners') }}" class="kt-menu__link ">
                                         <i class="kt-menu__link-bullet kt-menu__link-bullet--dot"></i>
                                         <span class="kt-menu__link-text">Business Owners</span>
                                     </a>
