@@ -33,6 +33,8 @@ Route::group(['middleware' => ['cors']], function () {
 });
 Route::get('permission', 'GpController@dashboard');
 
+Route::get('initiatives', 'InitiativeControler@index');
+
 Route::namespace('ADMIN')->group(function () {
 
     Route::post('users/forgot-password', 'UserController@forgotPassword');
