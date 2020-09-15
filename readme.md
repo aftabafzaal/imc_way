@@ -40,5 +40,5 @@ database\migrations\2020_09_10_230136_create_initiative_media_table.php
 # Composer.json  
  Run ->  composer require "laravelcollective/html":"^5.4" on command line
 
-
-
+# database 
+dbchanges\imc.sql
