@@ -32,7 +32,8 @@ app\InitiativeMedia.php
 app\Initiatives.php
 
 # views folder
-resources\views\admin/
+resources\views\admin
+
 resources\views\layouts\sidebar.blade.php
 
 # routes
@@ -49,7 +50,9 @@ database\migrations\2020_09_09_180425_create_initiative_categories_table.php
 database\migrations\2020_09_10_230136_create_initiative_media_table.php
 
 # Composer.json  
- Run ->  composer require "laravelcollective/html":"^5.4" on command line
+ Run ->  composer require 
+ "laravelcollective/html":"^5.4" 
+ on command line
 
 # database 
 dbchanges\imc.sql
