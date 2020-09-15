@@ -17,11 +17,18 @@ app\Http\Controllers\InitiativeController.php
 
 # models
 app\InitBusinessOwner.php
+
 app\InitCategory.php
+
 app\InitProject.php
+
 app\InitProjectCategory.php
+
+
 app\InitiativeCategory.php
+
 app\InitiativeMedia.php
+
 app\Initiatives.php
 
 # views folder
