@@ -33,7 +33,7 @@ Route::group(['middleware' => ['cors']], function () {
 });
 Route::get('permission', 'GpController@dashboard');
 
-Route::get('initiatives', 'InitiativeControler@index');
+
 
 Route::namespace('ADMIN')->group(function () {
 
@@ -522,6 +522,15 @@ Route::group(['middleware' => ['auth']], function () {
     });
 });
 
+
+Route::group(array('prefix' => 'en'), function() {
+
+    Route::get('initiatives', 'InitiativeControler@index');
+
+    Route::get('404', ['as' => '404', 'uses' => 'ErrorHandlerController@errorCode404']);
+    Route::get('405', ['as' => '405', 'uses' => 'ErrorHandlerController@errorCode405']);
+    Route::get('500', ['as' => '500', 'uses' => 'ErrorHandlerController@errorCode500']);
+});
 Route::group(array('prefix' => 'en'), function() {
 
     Route::get('care-network', function () {

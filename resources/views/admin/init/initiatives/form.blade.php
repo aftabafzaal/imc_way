@@ -320,9 +320,9 @@ $required = "";
                                 $ext = pathinfo($file->filepath, PATHINFO_EXTENSION);
                                 if ($ext == "jpg" || $ext == "jpeg" || $ext == "png") {
                                     ?>
-                                    <img width="100" height="100" src="<?php echo env('BASE_URL') . "/images/media/" . $file->filepath ?>">
+                                    <img width="200" height="200" src="<?php echo env('BASE_URL') . "/images/media/" . $file->filepath ?>">
                                 <?php } else { ?>
-                                    <video  width="100" height="100" src="<?php echo env('BASE_URL') . "/images/media/" . $file->filepath ?>" autoplay>
+                                    <video  width="200" height="200" src="<?php echo env('BASE_URL') . "/images/media/" . $file->filepath ?>" autoplay controls>
                                         <?php
                                     }
                                 }
