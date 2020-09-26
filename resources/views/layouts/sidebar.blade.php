@@ -401,6 +401,18 @@ $logo = $helper->getlogo();
                                         <span class="kt-menu__link-text">Initiatives</span>
                                     </a>
                                 </li>
+                                <li class="kt-menu__item {{ (Request::url() == url('admin/init/values') ? 'kt-menu__item--active' : '') }}" aria-haspopup="true">
+                                    <a href="{{ url('admin/init/values') }}" class="kt-menu__link ">
+                                        <i class="kt-menu__link-bullet kt-menu__link-bullet--dot"></i>
+                                        <span class="kt-menu__link-text">Values</span>
+                                    </a>
+                                </li>
+                                <li class="kt-menu__item {{ (Request::url() == url('admin/init/deliverables') ? 'kt-menu__item--active' : '') }}" aria-haspopup="true">
+                                    <a href="{{ url('admin/init/deliverables') }}" class="kt-menu__link ">
+                                        <i class="kt-menu__link-bullet kt-menu__link-bullet--dot"></i>
+                                        <span class="kt-menu__link-text">Deliverables</span>
+                                    </a>
+                                </li>
 
                             </ul>
                         </div>

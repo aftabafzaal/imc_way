@@ -274,6 +274,14 @@ Route::group(['middleware' => ['auth']], function () {
             Route::get('/businessowners', 'InitBusinessOwnerController@index');
             Route::post('businessowners/deleteMultiple', 'InitBusinessOwnerController@deleteMultiple');
 
+            Route::resource('values', 'InitValuesController');
+            Route::get('/values', 'InitValuesController@index');
+            Route::post('values/deleteMultiple', 'InitValuesController@deleteMultiple');
+            
+            Route::resource('deliverables', 'InitDeliverablesController');
+            Route::get('/deliverables', 'InitDeliverablesController@index');
+            Route::post('deliverables/deleteMultiple', 'InitDeliverablesController@deleteMultiple');
+
             Route::resource('initiatives', 'InitiativesController');
             Route::get('/initiatives', 'InitiativesController@index');
             Route::get('/getcategories/{id}', 'InitiativesController@getcategories');
@@ -526,6 +534,7 @@ Route::group(['middleware' => ['auth']], function () {
 Route::group(array('prefix' => 'en'), function() {
 
     Route::get('initiatives', 'InitiativeControler@index');
+    Route::get('initiatives/{slug}', 'InitiativeControler@initiative');
 
     Route::get('404', ['as' => '404', 'uses' => 'ErrorHandlerController@errorCode404']);
     Route::get('405', ['as' => '405', 'uses' => 'ErrorHandlerController@errorCode405']);
@@ -677,6 +686,9 @@ Route::group(array('prefix' => 'en'), function() {
 
 
 Route::group(array('prefix' => 'ar'), function() {
+
+    Route::get('initiatives', 'InitiativeControler@index');
+    Route::get('initiatives/{slug}', 'InitiativeControler@initiative');
 
 
     Route::get('obgyn-campaign', function () {

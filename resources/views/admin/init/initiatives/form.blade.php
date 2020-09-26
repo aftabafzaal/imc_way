@@ -1,5 +1,12 @@
 <?php
 $required = "";
+
+$startYear = date("Y") - 1;
+
+$years = array();
+for ($i = $startYear; $i < date("Y") + 10; $i++) {
+    $years[$i] = $i;
+}
 ?>
 @include('admin.init.errors')
 
@@ -13,11 +20,19 @@ $required = "";
         </a>
     </li>
     <li class="nav-item">
+        <a class="nav-link" id="objective-tab-3" data-toggle="tab" href="#objective">
+            <span class="nav-icon">
+                <i class="flaticon2-chat-1"></i>
+            </span>
+            <span class="nav-text">Objective</span>
+        </a>
+    </li>
+    <li class="nav-item">
         <a class="nav-link" id="readmore-tab-3" data-toggle="tab" href="#readmore">
             <span class="nav-icon">
                 <i class="flaticon2-chat-1"></i>
             </span>
-            <span class="nav-text">Read More</span>
+            <span class="nav-text"> Links</span>
         </a>
     </li>
     <li class="nav-item">
@@ -45,7 +60,7 @@ $required = "";
                     <div class="kt-section__body">
 
                         <div class="form-group row">
-                            <label class="col-xl-2 col-lg-2 col-form-label"> Objective (En)</label>
+                            <label class="col-xl-2 col-lg-2 col-form-label"> Title (En)</label>
                             <div class="col-lg-9 col-xl-9">
                                 {!! Form::text('title_en', null , array('placeholder' =>'Title in english','class' => 'form-control ',$required,"") ) !!}
 
@@ -57,7 +72,7 @@ $required = "";
                             </div>
                         </div>
                         <div class="form-group row">
-                            <label class="col-xl-2 col-lg-2 col-form-label"> Objective (Ar)</label>
+                            <label class="col-xl-2 col-lg-2 col-form-label"> Title (Ar)</label>
                             <div class="col-lg-9 col-xl-9">
                                 {!! Form::text('title_ar', null , array('placeholder' =>'Title in Arabic','class' => 'form-control ',$required,"") ) !!}
                                 @if ($errors->has('title_ar'))
@@ -65,6 +80,47 @@ $required = "";
                                     <strong>{{ $errors->first('title_ar') }}</strong>
                                 </span>
                                 @endif
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-xl-2 col-lg-2 col-form-label"> Slug (en)</label>
+                            <div class="col-lg-8 col-xl-8">
+                                {!! Form::text('slug_en', null , array('placeholder' =>'','class' => 'form-control ',"") ) !!}
+
+                                @if ($errors->has('slug_en'))
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $errors->first('slug_en') }}</strong>
+                                </span>
+                                @endif
+                            </div>
+                        </div>
+
+
+                        <div class="form-group row">
+                            <label class="col-xl-2 col-lg-2 col-form-label"> Slug (ar)</label>
+                            <div class="col-lg-8 col-xl-8">
+                                {!! Form::text('slug_ar', null , array('placeholder' =>'','class' => 'form-control ',"") ) !!}
+                                @if ($errors->has('slug_ar'))
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $errors->first('slug_ar') }}</strong>
+                                </span>
+                                @endif
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-xl-2 col-lg-2 col-form-label"> {{ __('Years') }}</label>
+
+
+                            <div class="col-lg-9 col-xl-9">
+
+                                {!! Form::select('years[]',  $years,$selectedYears,array('class' => 'form-control select2',"multiple",$required)) !!}
+
+                                @if ($errors->has('years'))
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $errors->first('years') }}</strong>
+                                </span>
+                                @endif
+
                             </div>
                         </div>
 
@@ -132,8 +188,6 @@ $required = "";
 
                         <div class="form-group row">
                             <label class="col-xl-2 col-lg-2 col-form-label"> {{ __('Business Owner') }}</label>
-
-
                             <div class="col-lg-9 col-xl-9">
 
                                 {!! Form::select('business_owner_id',  $owners,null,array('class' => 'form-control select2',"",$required,'placeholder' => 'Please Select Business Owner')) !!}
@@ -175,32 +229,66 @@ $required = "";
                                 @endif
                             </div>
                         </div>
-
                         <div class="form-group row">
-                            <label class="col-xl-3 col-lg-3 col-form-label"> Brief(En)</label>
-                            <div class="col-lg-8 col-xl-8">
+                            <label class="col-xl-2 col-lg-2 col-form-label"> {{ __('Values') }}</label>
 
-                                {!! Form::textarea('brief_en', null, ['size' => '105x25','class' => 'form-control ckeditor']) !!} 
 
-                                @if ($errors->has('description_en'))
+                            <div class="col-lg-9 col-xl-9">
+
+                                {!! Form::select('values[]',  $values,$selectedValues,array('class' => 'form-control select2',"multiple",$required)) !!}
+
+                                @if ($errors->has('values'))
                                 <span class="invalid-feedback" role="alert">
-                                    <strong>{{ $errors->first('brief_en') }}</strong>
+                                    <strong>{{ $errors->first('values') }}</strong>
                                 </span>
                                 @endif
+
                             </div>
                         </div>
                         <div class="form-group row">
-                            <label class="col-xl-3 col-lg-3 col-form-label"> Brief(Ar)</label>
-                            <div class="col-lg-8 col-xl-8">
-                                {!! Form::textarea('brief_ar', null, ['size' => '105x25','class' => 'form-control ckeditor']) !!} 
+                            <label class="col-xl-2 col-lg-2 col-form-label"> {{ __('Deliverables') }}</label>
 
-                                @if ($errors->has('description_ar'))
+
+                            <div class="col-lg-9 col-xl-9">
+
+                                {!! Form::select('deliverables[]',  $deliverables,$selectedDeliverables,array('class' => 'form-control select2',"multiple",$required)) !!}
+
+                                @if ($errors->has('deliverables'))
                                 <span class="invalid-feedback" role="alert">
-                                    <strong>{{ $errors->first('brief_ar') }}</strong>
+                                    <strong>{{ $errors->first('deliverables') }}</strong>
+                                </span>
+                                @endif
+
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-xl-2 col-lg-2 col-form-label"> Image</label>
+                            <div class="col-lg-8 col-xl-8">
+                                <input placeholder="Upload Image" id="image1" name="image1" type="text" class="form-control {{ $errors->has('image1') ? ' is-invalid' : '' }}" value="" readonly>
+                                @if ($errors->has('image1'))
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $errors->first('image1') }}</strong>
                                 </span>
                                 @endif
                             </div>
+                            <div class="col-lg-1 col-xl-1">
+                                <button type="button" class="btn btn-bold btn-label-brand btn-sm mediaModel" data-toggle="modal" data-target="#media-model" data-control="image1">Browse</button>
+                            </div>
                         </div>
+                        @if(!empty($model->media_id))
+                        <div class="form-group row">
+                            <label class="col-md-2 col-form-label"></label>
+                            <div class="col-md-8">
+                                <?php
+                                $enImage = $helper->getImage($model->media_id);
+                                $enImage = env("BASE_URL") . $enImage;
+                                ?>
+                                <img id="iconPreview" width="150px" src="{{$enImage}}">
+                            </div>
+                        </div>
+                        @endif
+
+
                         <div class="form-group row">
                             <label class="col-xl-2 col-lg-2 col-form-label"> Is Active</label>
                             <div class="col-lg-8 col-xl-8">
@@ -215,20 +303,59 @@ $required = "";
         </div>
     </div>
 
-    <div class="tab-pane" id="readmore" role="tabpanel" aria-labelledby="readmore-tab-3">
+    <div class="tab-pane fade" id="objective" role="tabpanel" aria-labelledby="objective-tab-3">
+
         <div class="form-group row">
-            <label class="col-xl-2 col-lg-2 col-form-label"> Read more Title</label>
-            <div class="col-lg-9 col-xl-9">
-                {!! Form::text('url_title', null , array('placeholder' =>'Title of the url e.g. Download PDF','class' => 'form-control',"") ) !!}
-                @if ($errors->has('url_title'))
+            <label class="col-xl-3 col-lg-3 col-form-label"> Objective(En)</label>
+            <div class="col-lg-8 col-xl-8">
+
+                {!! Form::textarea('objective_en', null, ['size' => '105x25','class' => 'form-control ckeditor',$required]) !!} 
+
+                @if ($errors->has('objective_en'))
                 <span class="invalid-feedback" role="alert">
-                    <strong>{{ $errors->first('url_title') }}</strong>
+                    <strong>{{ $errors->first('objective_en') }}</strong>
                 </span>
                 @endif
             </div>
         </div>
         <div class="form-group row">
-            <label class="col-xl-2 col-lg-2 col-form-label">URL</label>
+            <label class="col-xl-3 col-lg-3 col-form-label"> Objective(Ar)</label>
+            <div class="col-lg-8 col-xl-8">
+                {!! Form::textarea('objective_ar', null, ['size' => '105x25','class' => 'form-control ckeditor']) !!} 
+
+                @if ($errors->has('objective_ar'))
+                <span class="invalid-feedback" role="alert">
+                    <strong>{{ $errors->first('objective_ar') }}</strong>
+                </span>
+                @endif
+            </div>
+        </div>
+    </div>
+    <div class="tab-pane" id="readmore" role="tabpanel" aria-labelledby="readmore-tab-3">
+        <div class="form-group row">
+            <label class="col-xl-2 col-lg-2 col-form-label"> Read more Title 1 (En)</label>
+            <div class="col-lg-9 col-xl-9">
+                {!! Form::text('url_title_en', null , array('placeholder' =>'Title of the url e.g. Download PDF','class' => 'form-control',"") ) !!}
+                @if ($errors->has('url_title_en'))
+                <span class="invalid-feedback" role="alert">
+                    <strong>{{ $errors->first('url_title_en') }}</strong>
+                </span>
+                @endif
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-xl-2 col-lg-2 col-form-label"> Read more Title 1 (Ar)</label>
+            <div class="col-lg-9 col-xl-9">
+                {!! Form::text('url_title_ar', null , array('placeholder' =>'Title of the url e.g. Download PDF','class' => 'form-control',"") ) !!}
+                @if ($errors->has('url_title_ar'))
+                <span class="invalid-feedback" role="alert">
+                    <strong>{{ $errors->first('url_title_ar') }}</strong>
+                </span>
+                @endif
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-xl-2 col-lg-2 col-form-label">URL 1</label>
             <div class="col-lg-9 col-xl-9">
                 {!! Form::text('url', null , array('placeholder' =>'URL','class' => 'form-control',"") ) !!}
                 @if ($errors->has('url'))
@@ -238,30 +365,98 @@ $required = "";
                 @endif
             </div>
         </div>
-    </div>
-    <div class="tab-pane fade" id="extra" role="tabpanel" aria-labelledby="extra-tab-3">
-
         <div class="form-group row">
-            <label class="col-xl-2 col-lg-2 col-form-label"> Slug (en)</label>
-            <div class="col-lg-8 col-xl-8">
-                {!! Form::text('slug_en', null , array('placeholder' =>'','class' => 'form-control ',"") ) !!}
-
-                @if ($errors->has('slug_en'))
+            <label class="col-xl-2 col-lg-2 col-form-label"> Read more Title 2 (En)</label>
+            <div class="col-lg-9 col-xl-9">
+                {!! Form::text('url_title2_en', null , array('placeholder' =>'Title of the url e.g. Download PDF','class' => 'form-control',"") ) !!}
+                @if ($errors->has('url_title2_en'))
                 <span class="invalid-feedback" role="alert">
-                    <strong>{{ $errors->first('slug_en') }}</strong>
+                    <strong>{{ $errors->first('url_title2_en') }}</strong>
                 </span>
                 @endif
             </div>
         </div>
+        <div class="form-group row">
+            <label class="col-xl-2 col-lg-2 col-form-label"> Read more Title 2 (Ar)</label>
+            <div class="col-lg-9 col-xl-9">
+                {!! Form::text('url_title2_ar', null , array('placeholder' =>'Title of the url e.g. Download PDF','class' => 'form-control',"") ) !!}
+                @if ($errors->has('url_title2_ar'))
+                <span class="invalid-feedback" role="alert">
+                    <strong>{{ $errors->first('url_title2_ar') }}</strong>
+                </span>
+                @endif
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-xl-2 col-lg-2 col-form-label">URL 2</label>
+            <div class="col-lg-9 col-xl-9">
+                {!! Form::text('url2', null , array('placeholder' =>'URL','class' => 'form-control',"") ) !!}
+                @if ($errors->has('url2'))
+                <span class="invalid-feedback" role="alert">
+                    <strong>{{ $errors->first('url2') }}</strong>
+                </span>
+                @endif
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-xl-2 col-lg-2 col-form-label"> Read more Title 3 (En)</label>
+            <div class="col-lg-9 col-xl-9">
+                {!! Form::text('url_title3_en', null , array('placeholder' =>'Title of the url e.g. Download PDF','class' => 'form-control',"") ) !!}
+                @if ($errors->has('url_title3_en'))
+                <span class="invalid-feedback" role="alert">
+                    <strong>{{ $errors->first('url_title3_en') }}</strong>
+                </span>
+                @endif
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-xl-2 col-lg-2 col-form-label"> Read more Title 3 (Ar)</label>
+            <div class="col-lg-9 col-xl-9">
+                {!! Form::text('url_title3_ar', null , array('placeholder' =>'Title of the url e.g. Download PDF','class' => 'form-control',"") ) !!}
+                @if ($errors->has('url_title3_ar'))
+                <span class="invalid-feedback" role="alert">
+                    <strong>{{ $errors->first('url_title3_ar') }}</strong>
+                </span>
+                @endif
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-xl-2 col-lg-2 col-form-label">URL 3</label>
+            <div class="col-lg-9 col-xl-9">
+                {!! Form::text('url3', null , array('placeholder' =>'URL','class' => 'form-control',"") ) !!}
+                @if ($errors->has('url3'))
+                <span class="invalid-feedback" role="alert">
+                    <strong>{{ $errors->first('url3') }}</strong>
+                </span>
+                @endif
+            </div>
+        </div>
+    </div>
+    <div class="tab-pane fade" id="extra" role="tabpanel" aria-labelledby="extra-tab-3">
+
 
 
         <div class="form-group row">
-            <label class="col-xl-2 col-lg-2 col-form-label"> Slug (ar)</label>
+            <label class="col-xl-3 col-lg-3 col-form-label"> Brief(En)</label>
             <div class="col-lg-8 col-xl-8">
-                {!! Form::text('slug_ar', null , array('placeholder' =>'','class' => 'form-control ',"") ) !!}
-                @if ($errors->has('slug_ar'))
+
+                {!! Form::textarea('brief_en', null, ['size' => '105x25','class' => 'form-control ckeditor']) !!} 
+
+                @if ($errors->has('description_en'))
                 <span class="invalid-feedback" role="alert">
-                    <strong>{{ $errors->first('slug_ar') }}</strong>
+                    <strong>{{ $errors->first('brief_en') }}</strong>
+                </span>
+                @endif
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-xl-3 col-lg-3 col-form-label"> Brief(Ar)</label>
+            <div class="col-lg-8 col-xl-8">
+                {!! Form::textarea('brief_ar', null, ['size' => '105x25','class' => 'form-control ckeditor']) !!} 
+
+                @if ($errors->has('description_ar'))
+                <span class="invalid-feedback" role="alert">
+                    <strong>{{ $errors->first('brief_ar') }}</strong>
                 </span>
                 @endif
             </div>

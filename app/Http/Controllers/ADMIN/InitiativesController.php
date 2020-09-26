@@ -16,6 +16,10 @@ use App\InitProject;
 use App\InitBusinessOwner;
 use App\InitiativeMedia;
 use App\Media;
+use App\InitDeliverables;
+use App\InitValues;
+use App\InitiativeValues;
+use App\InitiativeDeliverables;
 
 class InitiativesController extends Controller {
 
@@ -76,18 +80,26 @@ class InitiativesController extends Controller {
         $categories = InitCategory::latest()->pluck("title_en", "id");
         $owners = InitBusinessOwner::latest()->pluck("title_en", "id");
         $departments = Department::latest()->pluck("title_en", "id");
+        $deliverables = InitDeliverables::latest()->pluck("description_en", "id");
+        $values = InitValues::latest()->pluck("title_en", "id");
 
+        $helper = new Helpers();
         $data["projects"] = $projects;
         $data["departments"] = $departments;
         $data["owners"] = $owners;
         $data["categories"] = $categories;
+        $data["values"] = $values;
+        $data["deliverables"] = $deliverables;
         $model = new Initiatives();
         $data["model"] = $model;
         $data["selected"] = NULL;
+        $data["selectedValues"] = NULL;
+        $data["selectedDeliverables"] = NULL;
+        $data["selectedYears"] = NULL;
         $data["folder"] = $this->folder;
         $data["title"] = $this->title;
         $data["action"] = $this->action;
-
+        $data["helper"] = $helper;
 
         return view("admin.init." . $this->folder . ".create", $data);
     }
@@ -120,10 +132,16 @@ class InitiativesController extends Controller {
             $input = $request->all();
             $categories = isset($input['categories']) ? $input['categories'] : [];
             $attachments = isset($input['attachments']) ? $input['attachments'] : [];
+            $values = isset($input['values']) ? $input['values'] : [];
+            $deliverables = isset($input['deliverables']) ? $input['deliverables'] : [];
+            $input['years'] = isset($input['years']) ? implode(",", $input['years']) : null;
 
             unset($input['_token']);
             unset($input['categories']);
             unset($input['attachments']);
+            unset($input['values']);
+            unset($input['deliverables']);
+            unset($input['image1']);
             //InitiativeMedia
 
             $model = new Initiatives();
@@ -139,6 +157,14 @@ class InitiativesController extends Controller {
             } else {
                 $input["status"] = 2;
             }
+
+            if (!empty($request->image1) && $request->image1 != null) {
+                $media_id = $helper->getMediaID($request->image1);
+                $input["image"] = $request->image1;
+                $input["media_id"] = $media_id;
+            }
+            
+
             $model = Initiatives::create($input);
 
             foreach ($categories as $category_id) {
@@ -150,10 +176,32 @@ class InitiativesController extends Controller {
             }
 
             $this->manageMedia($attachments, $model->id);
+            $this->manageValues($values, $model->id);
+            $this->manageDeliverables($deliverables, $model->id);
 
             return redirect('admin/init/' . $this->folder)->with("message", "Initiatives created")->with('alert-class', 'alert-success');
         } catch (Exception $e) {
             return redirect('admin/init/' . $this->folder)->with("message", $e->getMessage())->with('alert-class', 'alert-danger');
+        }
+    }
+
+    public function manageValues($values, $id) {
+        foreach ($values as $value_id) {
+            $m = new InitiativeValues();
+            $m->value_id = $value_id;
+            $m->initiative_id = $id;
+            $m->created_at = date("Y-m-d H:i:s");
+            $m->save();
+        }
+    }
+
+    public function manageDeliverables($deliverables, $id) {
+        foreach ($deliverables as $deliverable_id) {
+            $m = new InitiativeDeliverables();
+            $m->deliverable_id = $deliverable_id;
+            $m->initiative_id = $id;
+            $m->created_at = date("Y-m-d H:i:s");
+            $m->save();
         }
     }
 
@@ -183,10 +231,26 @@ class InitiativesController extends Controller {
             $selected[] = $gc->category_id;
         }
 
+        $selectedValues = array();
+        foreach ($model->values as $gc) {
+            $selectedValues[] = $gc->value_id;
+        }
+
+
+
+        $selectedDeliverables = array();
+        foreach ($model->deliverables as $gc) {
+            $selectedDeliverables[] = $gc->deliverable_id;
+        }
+
+
+
         $projects = InitProject::latest()->pluck("title_en", "id");
         $categories = InitCategory::latest()->pluck("title_en", "id");
         $owners = InitBusinessOwner::latest()->pluck("title_en", "id");
         $departments = Department::latest()->pluck("title_en", "id");
+        $deliverables = InitDeliverables::latest()->pluck("description_en", "id");
+        $values = InitValues::latest()->pluck("title_en", "id");
 
         $mediaModel = InitiativeMedia::join('media', 'media.id', '=', 'initiative_media.media_id')
                 ->select('media.id', 'media.filepath', 'media.type')
@@ -198,9 +262,13 @@ class InitiativesController extends Controller {
         $data["departments"] = $departments;
         $data["owners"] = $owners;
         $data["categories"] = $categories;
-
+        $data["values"] = $values;
+        $data["deliverables"] = $deliverables;
         $data["helper"] = $helper;
         $data["selected"] = $selected;
+        $data["selectedValues"] = $selectedValues;
+        $data["selectedYears"] = !empty($model->years) ? explode(",", $model->years) : array();
+        $data["selectedDeliverables"] = $selectedDeliverables;
         $data["model"] = $model;
         $data["folder"] = $this->folder;
         $data["title"] = $this->title;
@@ -267,7 +335,9 @@ class InitiativesController extends Controller {
             $categories = isset($input['categories']) ? $input['categories'] : [];
             $attachments = isset($input['attachments']) ? $input['attachments'] : [];
 
-
+            $values = isset($input['values']) ? $input['values'] : [];
+            $deliverables = isset($input['deliverables']) ? $input['deliverables'] : [];
+            $input['years'] = isset($input['years']) ? implode(",", $input['years']) : null;
 
             unset($input['_token']);
             unset($input['_method']);
@@ -277,8 +347,8 @@ class InitiativesController extends Controller {
             unset($input['image1']);
             unset($input['image']);
             unset($input['deleted']);
-
-
+            unset($input['values']);
+            unset($input['deliverables']);
 
             if (empty($request->slug_en)) {
                 $input["slug_en"] = str_slug($request->title_en, '-');
@@ -292,11 +362,16 @@ class InitiativesController extends Controller {
                 $input["status"] = 2;
             }
 
+            if (!empty($request->image1) && $request->image1 != null) {
+                $media_id = $helper->getMediaID($request->image1);
+                $input["image"] = $request->image1;
+                $input["media_id"] = $media_id;
+            }
+
             Initiatives::where("id", $id)->update($input);
 
             InitiativeCategory::where('initiative_id', $id)->delete();
             foreach ($categories as $category_id) {
-
 
                 $categoryModel = new InitiativeCategory();
                 $categoryModel->category_id = $category_id;
@@ -306,8 +381,12 @@ class InitiativesController extends Controller {
             }
 
             InitiativeMedia::where('initiative_id', $id)->delete();
+            InitiativeValues::where('initiative_id', $id)->delete();
+            InitiativeDeliverables::where('initiative_id', $id)->delete();
             $i = 0;
             $this->manageMedia($attachments, $id);
+            $this->manageValues($values, $id);
+            $this->manageDeliverables($deliverables, $id);
 
 
             return redirect('admin/init/' . $this->action)->with("message", "Project Updated")->with('alert-class', 'alert-success');

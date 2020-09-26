@@ -22,7 +22,8 @@ class CreateInitiativesTable extends Migration {
             $table->string('slug_ar');
             $table->string('where_en');
             $table->string('where_ar');
-            $table->string('url_title')->nullable();
+            $table->string('url_title_en')->nullable();
+            $table->string('url_title_ar')->nullable();
             $table->text('url')->nullable();
             $table->integer('project_id');
             $table->integer('department_id')->nullable();

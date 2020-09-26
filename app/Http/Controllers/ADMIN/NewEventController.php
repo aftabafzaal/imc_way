@@ -37,7 +37,7 @@ use App\Eventbanner;
 use App\Eventsbanner;
 
 
-class EventController extends Controller implements PageInterface
+class NewEventController extends Controller implements PageInterface
 {
     use CommonTrait, UserTrait;
 
